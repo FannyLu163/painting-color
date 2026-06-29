@@ -97,7 +97,7 @@
         }
 
         .subtitle-badge {
-            background: linear-gradient(135deg, #ff6f dream, var(--accent-pink));
+            background: linear-gradient(135deg, #ff6f91, var(--accent-pink));
             background-color: #ff6f91;
             color: white;
             font-size: 14px;
@@ -239,7 +239,7 @@
         }
 
         /* ==========================================
-           4. 燈箱互動彈窗 (Lightbox Modal)
+           4. 燈箱互動彈窗 (Lightbox Modal - RWD 精密強化版)
            ========================================== */
         .modal {
             position: fixed;
@@ -247,15 +247,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(58, 50, 50, 0.95); /* 深茶色半透明 */
+            background-color: rgba(30, 25, 25, 0.95); /* 深色霧面背景，更能襯托水彩光澤 */
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            padding: 16px;
+            transition: opacity 0.3s ease;
+            padding: 12px;
+            overflow-y: auto; /* 當手機為橫屏等低高度螢幕時，允許滑動整個彈窗 */
         }
 
         .modal.active {
@@ -263,18 +264,20 @@
             pointer-events: auto;
         }
 
-        /* 限制整個彈窗不超過螢幕的 90% */
         .modal-content {
             background-color: var(--bg-paper);
             width: 100%;
-            max-width: 420px;
-            margin: auto;
+            max-width: 420px; /* 黃金比例手機大圖視窗寬度 */
+            margin: auto; /* 配合 overflow-y 垂直置中 */
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
             display: flex;
             flex-direction: column;
-            max-height: 90vh; /* 防溢出核心 */
+            max-height: 90vh; /* 限制整個彈窗高度不超過視窗高度的 90%，防上下溢出 */
         }
 
         .modal.active .modal-content {
@@ -283,20 +286,22 @@
 
         .modal-close {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 36px;
-            height: 36px;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             color: white;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 14px;
             cursor: pointer;
-            z-index: 10;
+            z-index: 15;
             transition: var(--transition-smooth);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .modal-close:hover {
@@ -304,7 +309,6 @@
             transform: rotate(90deg);
         }
 
-        /* 限制大圖容器與大圖最高不超過視窗高度的 55%，並自動等比縮放 */
         .modal-img-container {
             width: 100%;
             background-color: #f3f0ea;
@@ -312,63 +316,64 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            flex: 1;
+            flex: 1; /* 彈性佔用彈窗內部的剩餘空間 */
             min-height: 180px;
-            max-height: 55vh; /* 防溢出核心 */
+            max-height: 55vh; /* 限制大圖容器的最大高度為視窗高度的 55%，絕不超出螢幕 */
         }
 
         .modal-img-container img {
             max-width: 100%;
-            max-height: 55vh; /* 限制大圖最高高度 */
+            max-height: 55vh; /* 限制圖片最高為 55vh，避免縱向撐開 */
             width: auto;
             height: auto;
-            object-fit: contain; /* 完美適應，絕不變形或裁切 */
+            object-fit: contain; /* 保持完整比例，絕不裁剪，配合 RWD 縮放 */
             display: block;
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 16px 20px;
             text-align: center;
+            background-color: var(--bg-paper);
+            flex-shrink: 0; /* 確保下方內容不被壓縮 */
+            border-top: 1px solid #f0eee8;
         }
 
         .modal-title-num {
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11px;
+            font-weight: 700;
             color: var(--accent-pink);
-            margin-bottom: 4px;
+            letter-spacing: 1.5px;
+            margin-bottom: 2px;
         }
 
         .modal-title-text {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 12px;
         }
 
-        .modal-description {
-            font-size: 13px;
-            color: #666;
-            background-color: #f3f6f1;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-green);
-            text-align: left;
-            margin-bottom: 15px;
+        .color-palette-label {
+            font-size: 11px;
+            color: #8c827a;
+            font-weight: bold;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
         .color-palette-guide {
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 4px;
         }
 
         .palette-dot {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         /* ==========================================
@@ -559,7 +564,7 @@
         </footer>
     </div>
 
-    <!-- 燈箱彈窗：全面移除描述 div (index.html 第 298 行) -->
+    <!-- 燈箱彈窗 (Lightbox Modal - 精簡無說明 RWD 版) -->
     <div id="image-modal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(event)">✕</button>
@@ -579,14 +584,13 @@
        7. 互動 JavaScript 程式碼
        ========================================== */ -->
     <script>
-        // 1. 八張畫作的詳細詮釋與配色指引
+        // 1. 八張畫作的詳細配色指引 (已移除文字說明欄位)
         const paintingsData = [
             {
                 num: "SAMPLE 01",
                 title: "櫻粉蝶影",
                 image: "1.jpg",
                 fallback: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800",
-                desc: "一隻斑斕的花蝶在春日綻放的櫻花枝頭駐足。建議使用柔和的淺粉色、玫紅色暈染花瓣，蝴蝶翅膀則可點綴天藍與明黃，背景以溫潤的草綠淡彩烘托，盡顯春意盎然的生機盎然。",
                 colors: ["#ffb7c5", "#f78da7", "#7bc0f5", "#fdf1a9", "#cbf3db"]
             },
             {
@@ -594,7 +598,6 @@
                 title: "幻紫微瀾",
                 image: "2.jpg",
                 fallback: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800",
-                desc: "對稱優美的紫斑蝶在夢幻般的色彩微瀾中翩翩起舞。著色時推薦使用層次分明的丁香紫、薰衣草紫與胭脂紅進行漸變，背景可採用隨意的粉紫潑灑水分渲染，營造神祕悠遠的空靈夢境。",
                 colors: ["#d2bbf4", "#9b72cf", "#f48cba", "#fde5ec", "#8f5799"]
             },
             {
@@ -602,7 +605,6 @@
                 title: "翡翠羽翼",
                 image: "3.jpg",
                 fallback: "https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?w=800",
-                desc: "深邃的墨綠與湖藍色調編織出春雨過後林間的幽靜。主體蝴蝶採用濃郁的孔雀綠與土耳其藍，配合淡綠的水色在大面積背景中暈染，營造出在翠綠森林中飛舞的靜謐力量感。",
                 colors: ["#00a896", "#028090", "#f0f3f4", "#9fffcb", "#05668d"]
             },
             {
@@ -610,7 +612,6 @@
                 title: "晨曦新綠",
                 image: "4.jpg",
                 fallback: "https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=800",
-                desc: "嫩綠的蝶影憩息於純白色的野薔薇之上。運用通透的檸檬黃與嫩草綠交織於蝴蝶翅膀，花朵可微留白，僅在邊緣與花蕊處施以淡黃與灰綠。整體色彩乾淨、清新，充滿晨曦活力。",
                 colors: ["#a8e6cf", "#dcedc1", "#ffd3b6", "#ffffff", "#88d49e"]
             },
             {
@@ -618,7 +619,6 @@
                 title: "緋紅織夢",
                 image: "5.jpg",
                 fallback: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800",
-                desc: "熱情洋溢的珊瑚橘與緋紅交織出一幅溫暖的春夢。蝴蝶雙翼採用大膽的橙紅色向邊緣漸變至深胭脂紅，周圍潑灑亮黃與朱紅水珠，賦予畫面強烈的水彩張力與溫暖情調。",
                 colors: ["#ff8b94", "#ffaaa6", "#ffd3b6", "#e23e57", "#ffbfa3"]
             },
             {
@@ -626,7 +626,6 @@
                 title: "繁星蝶聚",
                 image: "6.jpg",
                 fallback: "https://images.unsplash.com/photo-1501472312651-726afd116ff1?w=800",
-                desc: "多隻大小不一的精緻蝴蝶在純潔的空中交織飛舞。這是自由發揮配色的最佳舞台！可以為每一隻蝴蝶賦予不同的生命色彩，建議搭配淡紫、天藍與檸檬綠，創造斑斕多彩的星河。",
                 colors: ["#c5a3ff", "#a3c2ff", "#b4ffd4", "#f7ffb4", "#fcc6ff"]
             },
             {
@@ -634,7 +633,6 @@
                 title: "澄澈幽藍",
                 image: "7.jpg",
                 fallback: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800",
-                desc: "一隻高貴的淺藍斑蝶正悄然憩息在藍紫色的繡球花球之上。推薦以普魯士藍、群青與薰衣草紫疊加，花瓣處注意乾濕畫法的結合，留出花邊的通透感，是一幅極致典雅的藍色調佳作。",
                 colors: ["#4a90e2", "#5c6bc0", "#b39ddb", "#e0f2f1", "#0d47a1"]
             },
             {
@@ -642,7 +640,6 @@
                 title: "彩虹花語",
                 image: "8.jpg",
                 fallback: "https://images.unsplash.com/photo-1490750967868-88aa4486c944?w=800",
-                desc: "在色彩繽紛的小雛菊上，落下一隻擁有霓虹彩虹般雙翼的耀眼蝴蝶。這幅畫揉合了橙黃、洋紅、青藍等多種純度極高的對比色，著色時盡情發揮水分，讓彩虹在紙面上自然交融流淌。",
                 colors: ["#ff9e2c", "#ff4e50", "#f9d423", "#4facfe", "#00f2fe"]
             }
         ];
@@ -651,7 +648,6 @@
         const modalImg = document.getElementById("modal-img");
         const modalTitleNum = document.getElementById("modal-title-num");
         const modalTitleText = document.getElementById("modal-title-text");
-        const modalDesc = document.getElementById("modal-desc");
         const modalPalette = document.getElementById("modal-palette");
 
         // 2. 開啟燈箱彈窗函數
@@ -666,7 +662,6 @@
             
             modalTitleNum.textContent = data.num;
             modalTitleText.textContent = data.title;
-            modalDesc.textContent = data.desc;
             
             // 生成配色參考色塊
             modalPalette.innerHTML = "";
