@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水彩隨彩畫 - A-春信蝶舞</title>
+    <style>
+        /* ==========================================
+           1. 全域變數與重設 (Spring Color Palette)
+           ========================================== */
+        :root {
+            --primary-pink: #ffb7c5;      /* 櫻花粉 */
+            --primary-green: #a8e6cf;     /* 嫩芽綠 */
+            --text-dark: #3a3232;         /* 溫暖深灰 */
+            --bg-paper: #fdfbf7;          /* 水彩紙質感底色 */
+            --bg-card: #ffffff;           /* 卡片純白 */
+            --accent-pink: #ff6f91;       /* 亮粉色 */
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow-soft: 0 8px 24px rgba(168, 230, 207, 0.15);
+            --shadow-hover: 0 12px 30px rgba(255, 183, 197, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-paper);
+            background-image: radial-gradient(#fff9f2 20%, transparent 20%), radial-gradient(#f7fcf3 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 櫻花飄落背景 Canvas */
+        #cherry-blossom-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 16px 60px 16px;
+        }
+
+        /* ==========================================
+           2. 網頁頁首 (Header Section)
+           ========================================== */
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 10px 0;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .brand {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #8c827a;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .title-wrapper {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #f78da7 0%, #a8e6cf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .subtitle-badge {
+            background: linear-gradient(135deg, #ff6f dream, var(--accent-pink));
+            background-color: #ff6f91;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 4px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
+            box-shadow: 0 4px 10px rgba(255, 111, 145, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .slogan {
+            font-size: 13px;
+            color: #726a61;
+            margin-top: 12px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .slogan span {
+            display: inline-block;
+            margin: 0 4px;
+            background-color: #f1ebd9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        /* ==========================================
+           3. 圖片網格 (Gallery Grid)
+           ========================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 行動端預設 2 列 */
+            gap: 16px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @media (min-width: 600px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr); /* 平板 3 列 */
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr); /* 桌機 4 列 */
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 183, 197, 0.15);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-pink);
+        }
+
+        .image-container {
+            width: 100%;
+            aspect-ratio: 3 / 4.3; /* 符合原畫作縱橫比 */
+            background-color: #eae6df;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        /* 點按放大提示浮標 */
+        .zoom-hint {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            opacity: 0.8;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .zoom-hint {
+            opacity: 1;
+            background-color: var(--accent-pink);
+            color: white;
+        }
+
+        .zoom-hint svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .card-info {
+            padding: 10px 12px;
+            text-align: center;
+            background-color: #fafdf9;
+            border-top: 1px solid #f0eee8;
+        }
+
+        .card-num {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-pink);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* ==========================================
+           4. 燈箱互動彈窗 (Lightbox Modal)
+           ========================================== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(58, 50, 50, 0.95); /* 深茶色半透明 */
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 16px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-paper);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-close:hover {
+            background-color: var(--accent-pink);
+            transform: rotate(90deg);
+        }
+
+        .modal-img-container {
+            width: 100%;
+            aspect-ratio: 3 / 4.3;
+            background-color: #eee;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-title-num {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--accent-pink);
+            margin-bottom: 4px;
+        }
+
+        .modal-title-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .modal-description {
+            font-size: 13px;
+            color: #666;
+            background-color: #f3f6f1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-green);
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .color-palette-guide {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .palette-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* ==========================================
+           5. 網頁底首 (Footer Section)
+           ========================================== */
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--primary-pink);
+            color: #8c827a;
+            font-size: 12px;
+        }
+
+        .footer-logo {
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        /* ==========================================
+           6. 關鍵格動畫 (Keyframe Animations)
+           ========================================== */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 櫻花飄落畫布 -->
+    <canvas id="cherry-blossom-canvas"></canvas>
+
+    <div class="container">
+        <!-- 頁首區塊 -->
+        <header>
+            <div class="brand">明日工作室 明日文創</div>
+            <div class="title-wrapper">
+                <h1>水彩隨彩畫</h1>
+            </div>
+            <div>
+                <span class="subtitle-badge">A - 春信蝶舞</span>
+            </div>
+            <div class="slogan">
+                我的行動畫室 <span>沾・水・即・畫</span> 用水彩捕捉春天的美好
+            </div>
+        </header>
+
+        <!-- 畫作展示網格 (八張縮圖) -->
+        <main class="gallery-grid">
+            <!-- 卡片 1 -->
+            <div class="card" onclick="openModal(0)">
+                <div class="image-container">
+                    <img src="1.jpg" alt="01 櫻粉蝶影" onerror="this.src='https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 01</div>
+                    <div class="card-title">櫻粉蝶影</div>
+                </div>
+            </div>
+
+            <!-- 卡片 2 -->
+            <div class="card" onclick="openModal(1)">
+                <div class="image-container">
+                    <img src="2.jpg" alt="02 幻紫微瀾" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 02</div>
+                    <div class="card-title">幻紫微瀾</div>
+                </div>
+            </div>
+
+            <!-- 卡片 3 -->
+            <div class="card" onclick="openModal(2)">
+                <div class="image-container">
+                    <img src="3.jpg" alt="03 翡翠羽翼" onerror="this.src='https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 03</div>
+                    <div class="card-title">翡翠羽翼</div>
+                </div>
+            </div>
+
+            <!-- 卡片 4 -->
+            <div class="card" onclick="openModal(3)">
+                <div class="image-container">
+                    <img src="4.jpg" alt="04 晨曦新綠" onerror="this.src='https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 04</div>
+                    <div class="card-title">晨曦新綠</div>
+                </div>
+            </div>
+
+            <!-- 卡片 5 -->
+            <div class="card" onclick="openModal(4)">
+                <div class="image-container">
+                    <img src="5.jpg" alt="05 緋紅織夢" onerror="this.src='https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 05</div>
+                    <div class="card-title">緋紅織夢</div>
+                </div>
+            </div>
+
+            <!-- 卡片 6 -->
+            <div class="card" onclick="openModal(5)">
+                <div class="image-container">
+                    <img src="6.jpg" alt="06 繁星蝶聚" onerror="this.src='https://images.unsplash.com/photo-1501472312651-726afd116ff1?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 06</div>
+                    <div class="card-title">繁星蝶聚</div>
+                </div>
+            </div>
+
+            <!-- 卡片 7 -->
+            <div class="card" onclick="openModal(6)">
+                <div class="image-container">
+                    <img src="7.jpg" alt="07 澄澈幽藍" onerror="this.src='https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 07</div>
+                    <div class="card-title">澄澈幽藍</div>
+                </div>
+            </div>
+
+            <!-- 卡片 8 -->
+            <div class="card" onclick="openModal(7)">
+                <div class="image-container">
+                    <img src="8.jpg" alt="08 彩虹花語" onerror="this.src='https://images.unsplash.com/photo-1490750967868-88aa4486c944?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-num">SAMPLE 08</div>
+                    <div class="card-title">彩虹花語</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 網頁頁尾 -->
+        <footer>
+            <div class="footer-logo">明日工作室股份有限公司</div>
+            <p>Tomorrow Studio Corp. All Rights Reserved.</p>
+            <p style="margin-top: 8px; font-size: 11px; opacity: 0.8;">顏料 ＋ 水筆 ＋ 畫紙 ALL IN ONE，隨時開啟你的行動畫室</p>
+        </footer>
+    </div>
+
+    <!-- 燈箱彈窗 -->
+    <div id="image-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">✕</button>
+            <div class="modal-img-container">
+                <img id="modal-img" src="" alt="大圖">
+            </div>
+            <div class="modal-body">
+                <div id="modal-title-num" class="modal-title-num"></div>
+                <div id="modal-title-text" class="modal-title-text"></div>
+                <div id="modal-desc" class="modal-description"></div>
+                <div style="font-size: 11px; color: #888; font-weight: bold; margin-bottom: 4px;">推薦配色參考色調</div>
+                <div id="modal-palette" class="color-palette-guide"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+       7. 互動 JavaScript 程式碼
+       ========================================== */ -->
+    <script>
+        // 1. 八張畫作的詳細詮釋與配色指引
+        const paintingsData = [
+            {
+                num: "SAMPLE 01",
+                title: "櫻粉蝶影",
+                image: "1.jpg",
+                fallback: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800",
+                desc: "一隻斑斕的花蝶在春日綻放的櫻花枝頭駐足。建議使用柔和的淺粉色、玫紅色暈染花瓣，蝴蝶翅膀則可點綴天藍與明黃，背景以溫潤的草綠淡彩烘托，盡顯春意盎然的生機盎然。",
+                colors: ["#ffb7c5", "#f78da7", "#7bc0f5", "#fdf1a9", "#cbf3db"]
+            },
+            {
+                num: "SAMPLE 02",
+                title: "幻紫微瀾",
+                image: "2.jpg",
+                fallback: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800",
+                desc: "對稱優美的紫斑蝶在夢幻般的色彩微瀾中翩翩起舞。著色時推薦使用層次分明的丁香紫、薰衣草紫與胭脂紅進行漸變，背景可採用隨意的粉紫潑灑水分渲染，營造神祕悠遠的空靈夢境。",
+                colors: ["#d2bbf4", "#9b72cf", "#f48cba", "#fde5ec", "#8f5799"]
+            },
+            {
+                num: "SAMPLE 03",
+                title: "翡翠羽翼",
+                image: "3.jpg",
+                fallback: "https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?w=800",
+                desc: "深邃的墨綠與湖藍色調編織出春雨過後林間的幽靜。主體蝴蝶採用濃郁的孔雀綠與土耳其藍，配合淡綠的水色在大面積背景中暈染，營造出在翠綠森林中飛舞的靜謐力量感。",
+                colors: ["#00a896", "#028090", "#f0f3f4", "#9fffcb", "#05668d"]
+            },
+            {
+                num: "SAMPLE 04",
+                title: "晨曦新綠",
+                image: "4.jpg",
+                fallback: "https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=800",
+                desc: "嫩綠的蝶影憩息於純白色的野薔薇之上。運用通透的檸檬黃與嫩草綠交織於蝴蝶翅膀，花朵可微留白，僅在邊緣與花蕊處施以淡黃與灰綠。整體色彩乾淨、清新，充滿晨曦活力。",
+                colors: ["#a8e6cf", "#dcedc1", "#ffd3b6", "#ffffff", "#88d49e"]
+            },
+            {
+                num: "SAMPLE 05",
+                title: "緋紅織夢",
+                image: "5.jpg",
+                fallback: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800",
+                desc: "熱情洋溢的珊瑚橘與緋紅交織出一幅溫暖的春夢。蝴蝶雙翼採用大膽的橙紅色向邊緣漸變至深胭脂紅，周圍潑灑亮黃與朱紅水珠，賦予畫面強烈的水彩張力與溫暖情調。",
+                colors: ["#ff8b94", "#ffaaa6", "#ffd3b6", "#e23e57", "#ffbfa3"]
+            },
+            {
+                num: "SAMPLE 06",
+                title: "繁星蝶聚",
+                image: "6.jpg",
+                fallback: "https://images.unsplash.com/photo-1501472312651-726afd116ff1?w=800",
+                desc: "多隻大小不一的精緻蝴蝶在純潔的空中交織飛舞。這是自由發揮配色的最佳舞台！可以為每一隻蝴蝶賦予不同的生命色彩，建議搭配淡紫、天藍與檸檬綠，創造斑斕多彩的星河。",
+                colors: ["#c5a3ff", "#a3c2ff", "#b4ffd4", "#f7ffb4", "#fcc6ff"]
+            },
+            {
+                num: "SAMPLE 07",
+                title: "澄澈幽藍",
+                image: "7.jpg",
+                fallback: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=800",
+                desc: "一隻高貴的淺藍斑蝶正悄然憩息在藍紫色的繡球花球之上。推薦以普魯士藍、群青與薰衣草紫疊加，花瓣處注意乾濕畫法的結合，留出花邊的通透感，是一幅極致典雅的藍色調佳作。",
+                colors: ["#4a90e2", "#5c6bc0", "#b39ddb", "#e0f2f1", "#0d47a1"]
+            },
+            {
+                num: "SAMPLE 08",
+                title: "彩虹花語",
+                image: "8.jpg",
+                fallback: "https://images.unsplash.com/photo-1490750967868-88aa4486c944?w=800",
+                desc: "在色彩繽紛的小雛菊上，落下一隻擁有霓虹彩虹般雙翼的耀眼蝴蝶。這幅畫揉合了橙黃、洋紅、青藍等多種純度極高的對比色，著色時盡情發揮水分，讓彩虹在紙面上自然交融流淌。",
+                colors: ["#ff9e2c", "#ff4e50", "#f9d423", "#4facfe", "#00f2fe"]
+            }
+        ];
+
+        const modal = document.getElementById("image-modal");
+        const modalImg = document.getElementById("modal-img");
+        const modalTitleNum = document.getElementById("modal-title-num");
+        const modalTitleText = document.getElementById("modal-title-text");
+        const modalDesc = document.getElementById("modal-desc");
+        const modalPalette = document.getElementById("modal-palette");
+
+        // 2. 開啟燈箱彈窗函數
+        function openModal(index) {
+            const data = paintingsData[index];
+
+            // 優先加載本地 JPG 圖檔，若無則降級使用精美水彩替代圖
+            modalImg.src = data.image;
+            modalImg.onerror = function() {
+                this.src = data.fallback;
+            };
+
+            modalTitleNum.textContent = data.num;
+            modalTitleText.textContent = data.title;
+            modalDesc.textContent = data.desc;
+
+            // 生成配色參考色塊
+            modalPalette.innerHTML = "";
+            data.colors.forEach(color => {
+                const dot = document.createElement("div");
+                dot.className = "palette-dot";
+                dot.style.backgroundColor = color;
+                dot.title = color;
+                modalPalette.appendChild(dot);
+            });
+
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden"; // 防止底層滾動
+        }
+
+        // 3. 關閉燈箱彈窗函數
+        function closeModal(event) {
+            modal.classList.remove("active");
+            document.body.style.overflow = ""; // 恢復滾動
+        }
+
+        // 4. 春天櫻花飄落（Cherry Blossom Falling Effect）Canvas 粒子系統
+        const canvas = document.getElementById("cherry-blossom-canvas");
+        const ctx = canvas.getContext("2d");
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.6 + 0.3;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y / 30) * 0.5; // 隨微風擺動
+                this.angle += this.spin;
+
+                // 若飄出螢幕外則重置
+                if (this.y > height + 10 || this.x < -10 || this.x > width + 10) {
+                    this.y = Math.random() * -20;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.beginPath();
+                // 畫出一片櫻花瓣的精美形狀
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size/2, -this.size/2, -this.size, this.size/3, 0, this.size);
+                ctx.bezierCurveTo(this.size, this.size/3, this.size/2, -this.size/2, 0, 0);
+                ctx.fillStyle = `rgba(255, 183, 197, ${this.opacity})`; // 櫻花粉色
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const petals = Array.from({ length: 25 }, () => new Petal());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
