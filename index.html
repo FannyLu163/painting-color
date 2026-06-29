@@ -263,16 +263,18 @@
             pointer-events: auto;
         }
 
+        /* 限制整個彈窗不超過螢幕的 90% */
         .modal-content {
             background-color: var(--bg-paper);
             width: 100%;
-            max-width: 480px;
-            border-radius: 24px;
+            max-width: 420px;
+            margin: auto;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            transform: scale(0.9);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* 防溢出核心 */
         }
 
         .modal.active .modal-content {
@@ -302,18 +304,26 @@
             transform: rotate(90deg);
         }
 
+        /* 限制大圖容器與大圖最高不超過視窗高度的 55%，並自動等比縮放 */
         .modal-img-container {
             width: 100%;
-            aspect-ratio: 3 / 4.3;
-            background-color: #eee;
+            background-color: #f3f0ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
-            position: relative;
+            flex: 1;
+            min-height: 180px;
+            max-height: 55vh; /* 防溢出核心 */
         }
 
         .modal-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 55vh; /* 限制大圖最高高度 */
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 完美適應，絕不變形或裁切 */
+            display: block;
         }
 
         .modal-body {
@@ -549,7 +559,7 @@
         </footer>
     </div>
 
-    <!-- 燈箱彈窗 -->
+    <!-- 燈箱彈窗：全面移除描述 div (index.html 第 298 行) -->
     <div id="image-modal" class="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeModal(event)">✕</button>
@@ -559,8 +569,7 @@
             <div class="modal-body">
                 <div id="modal-title-num" class="modal-title-num"></div>
                 <div id="modal-title-text" class="modal-title-text"></div>
-                <div id="modal-desc" class="modal-description"></div> 
-                <div style="font-size: 11px; color: #888; font-weight: bold; margin-bottom: 4px;">推薦配色參考色調</div>
+                <div class="color-palette-label">推薦配色參考色調</div>
                 <div id="modal-palette" class="color-palette-guide"></div>
             </div>
         </div>
@@ -648,17 +657,17 @@
         // 2. 開啟燈箱彈窗函數
         function openModal(index) {
             const data = paintingsData[index];
-
+            
             // 優先加載本地 JPG 圖檔，若無則降級使用精美水彩替代圖
             modalImg.src = data.image;
             modalImg.onerror = function() {
                 this.src = data.fallback;
             };
-
+            
             modalTitleNum.textContent = data.num;
             modalTitleText.textContent = data.title;
             modalDesc.textContent = data.desc;
-
+            
             // 生成配色參考色塊
             modalPalette.innerHTML = "";
             data.colors.forEach(color => {
