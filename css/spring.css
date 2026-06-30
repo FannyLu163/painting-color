@@ -1,0 +1,415 @@
+/* ==========================================
+           1. 全域變數與重設 (Spring Color Palette)
+           ========================================== */
+        :root {
+            --primary-pink: #ffb7c5;      /* 櫻花粉 */
+            --primary-green: #a8e6cf;     /* 嫩芽綠 */
+            --text-dark: #3a3232;         /* 溫暖深灰 */
+            --bg-paper: #fdfbf7;          /* 水彩紙質感底色 */
+            --bg-card: #ffffff;           /* 卡片純白 */
+            --accent-pink: #ff6f91;       /* 亮粉色 */
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow-soft: 0 8px 24px rgba(168, 230, 207, 0.15);
+            --shadow-hover: 0 12px 30px rgba(255, 183, 197, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-paper);
+            background-image: radial-gradient(#fff9f2 20%, transparent 20%), radial-gradient(#f7fcf3 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 櫻花飄落背景 Canvas */
+        #cherry-blossom-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 16px 60px 16px;
+        }
+
+        /* ==========================================
+           2. 網頁頁首 (Header Section)
+           ========================================== */
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 10px 0;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .brand {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #8c827a;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .title-wrapper {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #f78da7 0%, #a8e6cf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .subtitle-badge {
+            background: linear-gradient(135deg, #ff6f91, var(--accent-pink));
+            background-color: #ff6f91;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 4px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
+            box-shadow: 0 4px 10px rgba(255, 111, 145, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .slogan {
+            font-size: 13px;
+            color: #726a61;
+            margin-top: 12px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .slogan span {
+            display: inline-block;
+            margin: 0 4px;
+            background-color: #f1ebd9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        /* ==========================================
+           3. 圖片網格 (Gallery Grid)
+           ========================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 行動端預設 2 列 */
+            gap: 16px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @media (min-width: 600px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr); /* 平板 3 列 */
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr); /* 桌機 4 列 */
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 183, 197, 0.15);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-pink);
+        }
+
+        .image-container {
+            width: 100%;
+            aspect-ratio: 3 / 4.3; /* 符合原畫作縱橫比 */
+            background-color: #eae6df;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        /* 點按放大提示浮標 */
+        .zoom-hint {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            opacity: 0.8;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover .zoom-hint {
+            opacity: 1;
+            background-color: var(--accent-pink);
+            color: white;
+        }
+
+        .zoom-hint svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .card-info {
+            padding: 10px 12px;
+            text-align: center;
+            background-color: #fafdf9;
+            border-top: 1px solid #f0eee8;
+        }
+
+        .card-num {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-pink);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* ==========================================
+           4. 燈箱互動彈窗 (Lightbox Modal - RWD 精密強化版)
+           ========================================== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(30, 25, 25, 0.95); /* 深色霧面背景，更能襯托水彩光澤 */
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 12px;
+            overflow-y: auto; /* 當手機為橫屏等低高度螢幕時，允許滑動整個彈窗 */
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-paper);
+            width: 100%;
+            max-width: 420px; /* 黃金比例手機大圖視窗寬度 */
+            margin: auto; /* 配合 overflow-y 垂直置中 */
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* 限制整個彈窗高度不超過視窗高度的 90%，防上下溢出 */
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 15;
+            transition: var(--transition-smooth);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .modal-close:hover {
+            background-color: var(--accent-pink);
+            transform: rotate(90deg);
+        }
+
+        .modal-img-container {
+            width: 100%;
+            background-color: #f3f0ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex: 1; /* 彈性佔用彈窗內部的剩餘空間 */
+            min-height: 180px;
+            max-height: 55vh; /* 限制大圖容器的最大高度為視窗高度的 55%，絕不超出螢幕 */
+        }
+
+        .modal-img-container img {
+            max-width: 100%;
+            max-height: 55vh; /* 限制圖片最高為 55vh，避免縱向撐開 */
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 保持完整比例，絕不裁剪，配合 RWD 縮放 */
+            display: block;
+        }
+
+        .modal-body {
+            padding: 16px 20px;
+            text-align: center;
+            background-color: var(--bg-paper);
+            flex-shrink: 0; /* 確保下方內容不被壓縮 */
+            border-top: 1px solid #f0eee8;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title-num {
+            color: var(--accent-pink);
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        .color-palette-label {
+            font-size: 11px;
+            color: #8c827a;
+            font-weight: bold;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .color-palette-guide {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .palette-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        /* ==========================================
+           5. 網頁底首 (Footer Section)
+           ========================================== */
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--primary-pink);
+            color: #8c827a;
+            font-size: 12px;
+        }
+
+        .footer-logo {
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        /* ==========================================
+           6. 關鍵格動畫 (Keyframe Animations)
+           ========================================== */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
