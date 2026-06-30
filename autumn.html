@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水彩隨彩畫 - C-秋賞拾光</title>
+    <link rel="stylesheet" href="css/autumn.css">
+</head>
+<body>
+
+    <!-- 楓葉飄落畫布 -->
+    <canvas id="maple-falling-canvas"></canvas>
+
+    <div class="container">
+        <!-- 頁首區塊 -->
+        <header>
+            <div class="brand">明日工作室 明日文創</div>
+            <div class="title-wrapper">
+                <h1>水彩隨彩畫</h1>
+            </div>
+            <div>
+                <span class="subtitle-badge">C - 秋賞拾光</span>
+            </div>
+            <div class="slogan">
+                我的行動畫室 <span>沾・水・即・畫</span> 用水彩捕捉秋天的美好
+            </div>
+        </header>
+
+        <!-- 畫作展示網格 (八張縮圖) -->
+        <main class="gallery-grid">
+            <!-- 卡片 1 -->
+            <div class="card" onclick="openModal(0)">
+                <div class="image-container">
+                    <img src="imgs/Fall1.jpg" alt="01 楓紅小鋪" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">01</span>楓紅小鋪
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 2 -->
+            <div class="card" onclick="openModal(1)">
+                <div class="image-container">
+                    <img src="imgs/Fall2.jpg" alt="02 綠意庭院" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">02</span>綠意庭院
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 3 -->
+            <div class="card" onclick="openModal(2)">
+                <div class="image-container">
+                    <img src="imgs/Fall3.jpg" alt="03 春櫻漫舞" onerror="this.src='https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">03</span>春櫻漫舞
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 4 -->
+            <div class="card" onclick="openModal(3)">
+                <div class="image-container">
+                    <img src="imgs/Fall4.jpg" alt="04 翠綠鐵道" onerror="this.src='https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">04</span>翠綠鐵道
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 5 -->
+            <div class="card" onclick="openModal(4)">
+                <div class="image-container">
+                    <img src="imgs/Fall5.jpg" alt="05 金楓山莊" onerror="this.src='https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">05</span>金楓山莊
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 6 -->
+            <div class="card" onclick="openModal(5)">
+                <div class="image-container">
+                    <img src="imgs/Fall6.jpg" alt="06 藍天列車" onerror="this.src='https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">06</span>藍天列車
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 7 -->
+            <div class="card" onclick="openModal(6)">
+                <div class="image-container">
+                    <img src="imgs/Fall7.jpg" alt="07 楓林咖啡" onerror="this.src='https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">07</span>楓林咖啡
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片 8 -->
+            <div class="card" onclick="openModal(7)">
+                <div class="image-container">
+                    <img src="imgs/Fall8.jpg" alt="08 櫻花樹下" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&auto=format&fit=crop&q=60'">
+                    <div class="zoom-hint">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <div class="card-title">
+                        <span style="color: var(--accent-red); margin-right: 8px;">08</span>櫻花樹下
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 網頁頁尾 -->
+        <footer>
+            <div class="footer-logo">明日工作室股份有限公司</div>
+            <p>Tomorrow Studio Corp. All Rights Reserved.</p>
+            <p style="margin-top: 8px; font-size: 11px; opacity: 0.8;">顏料 ＋ 水筆 ＋ 畫紙 ALL IN ONE，隨時開啟你的行動畫室</p>
+        </footer>
+    </div>
+
+    <!-- 燈箱彈窗 (Lightbox Modal - 精簡無說明 RWD 版) -->
+    <div id="image-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">✕</button>
+            <div class="modal-img-container">
+                <img id="modal-img" src="" alt="大圖">
+            </div>
+            <div class="modal-body">
+                <div id="modal-title" class="modal-title"></div>
+                <div class="color-palette-label">推薦配色參考色調</div>
+                <div id="modal-palette" class="color-palette-guide"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+       7. 互動 JavaScript 程式碼
+       ========================================== -->
+    <script>
+        // 1. 八張畫作的詳細配色指引 (已移除文字說明欄位，符合極簡化 RWD 規格)
+        const paintingsData = [
+            {
+                num: "SAMPLE 01",
+                title: "楓紅小鋪",
+                image: "imgs/Fall1.jpg",
+                fallback: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+                colors: ["#c0392b", "#e67e22", "#f1c40f", "#3e2723", "#fbeed7"]
+            },
+            {
+                num: "SAMPLE 02",
+                title: "綠意庭院",
+                image: "imgs/Fall2.jpg",
+                fallback: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800",
+                colors: ["#88d49e", "#2e7d32", "#dcedc1", "#8d6e63", "#ffffff"]
+            },
+            {
+                num: "SAMPLE 03",
+                title: "春櫻漫舞",
+                image: "imgs/Fall3.jpg",
+                fallback: "https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?w=800",
+                colors: ["#ffb7c5", "#f78da7", "#7bc0f5", "#cbf3db", "#ffffff"]
+            },
+            {
+                num: "SAMPLE 04",
+                title: "翠綠鐵道",
+                image: "imgs/Fall4.jpg",
+                fallback: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=800",
+                colors: ["#1b5e20", "#81c784", "#ffb74d", "#d32f2f", "#f5f5f5"]
+            },
+            {
+                num: "SAMPLE 05",
+                title: "金楓山莊",
+                image: "imgs/Fall5.jpg",
+                fallback: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
+                colors: ["#f1c40f", "#e67e22", "#95a5a6", "#34495e", "#fdf5e6"]
+            },
+            {
+                num: "SAMPLE 06",
+                title: "藍天列車",
+                image: "imgs/Fall6.jpg",
+                fallback: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=800",
+                colors: ["#29b6f6", "#ff7043", "#ffffff", "#1b5e20", "#8d6e63"]
+            },
+            {
+                num: "SAMPLE 07",
+                title: "楓林咖啡",
+                image: "imgs/Fall7.jpg",
+                fallback: "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=800",
+                colors: ["#f9d423", "#9b59b6", "#e67e22", "#ffffff", "#a0522d"]
+            },
+            {
+                num: "SAMPLE 08",
+                title: "櫻花樹下",
+                image: "imgs/Fall8.jpg",
+                fallback: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
+                colors: ["#ffa3b1", "#ffccd5", "#81c784", "#4fc3f7", "#8d6e63"]
+            }
+        ];
+
+        const modal = document.getElementById("image-modal");
+        const modalImg = document.getElementById("modal-img");
+        const modalTitle = document.getElementById("modal-title");
+        const modalPalette = document.getElementById("modal-palette");
+
+        // 2. 開啟燈箱彈窗函數
+        function openModal(index) {
+            const data = paintingsData[index];
+            
+            // 優先加載本地 JPG 圖檔，若無則降級使用精美水彩替代圖
+            modalImg.src = data.image;
+            modalImg.onerror = function() {
+                this.src = data.fallback;
+            };
+            
+            // 格式化為單行標題，例如 "04 翠綠鐵道"
+            const numStr = String(index + 1).padStart(2, '0');
+            modalTitle.innerHTML = `<span class="modal-title-num">${numStr}</span>${data.title}`;
+            
+            // 生成配色參考色塊
+            modalPalette.innerHTML = "";
+            data.colors.forEach(color => {
+                const dot = document.createElement("div");
+                dot.className = "palette-dot";
+                dot.style.backgroundColor = color;
+                dot.title = color;
+                modalPalette.appendChild(dot);
+            });
+
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden"; // 防止底層滾動
+        }
+
+        // 3. 關閉燈箱彈窗函數
+        function closeModal(event) {
+            modal.classList.remove("active");
+            document.body.style.overflow = ""; // 恢復滾動
+        }
+
+        // 4. 金秋落葉飄落（Autumn Leaves Falling Effect）Canvas 粒子系統
+        const canvas = document.getElementById("maple-falling-canvas");
+        const ctx = canvas.getContext("2d");
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Leaf {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.size = Math.random() * 10 + 8;
+                this.speedY = Math.random() * 1.2 + 0.6;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.opacity = Math.random() * 0.5 + 0.4;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 1.5 - 0.75;
+                
+                // 楓葉與秋葉配色：楓紅、金黃、琥珀橙、棕褐隨機
+                const leafColors = [
+                    `rgba(192, 57, 43, ${this.opacity})`,   // 楓紅
+                    `rgba(230, 126, 34, ${this.opacity})`,  // 琥珀橙
+                    `rgba(241, 196, 15, ${this.opacity})`,  // 金黃
+                    `rgba(141, 110, 99, ${this.opacity})`   // 淺褐
+                ];
+                this.color = leafColors[Math.floor(Math.random() * leafColors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y / 40) * 0.4; // 隨微風搖曳
+                this.angle += this.spin;
+
+                // 若落出螢幕外則重置
+                if (this.y > height + 10 || this.x < -10 || this.x > width + 10) {
+                    this.y = Math.random() * -20;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.beginPath();
+                
+                // 畫出一片優雅秋葉/楓葉形狀（使用貝氏曲線）
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size/2, -this.size/3, -this.size, this.size/2, 0, this.size);
+                ctx.bezierCurveTo(this.size, this.size/2, this.size/2, -this.size/3, 0, 0);
+                
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const leaves = Array.from({ length: 20 }, () => new Leaf());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            leaves.forEach(leaf => {
+                leaf.update();
+                leaf.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
